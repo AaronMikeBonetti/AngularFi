@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  // Angular brand
+  --ang-red:        #DD0031;
+  --ang-red-dark:   #C3002F;
+  --ang-red-glow:   rgba(221, 0, 49, 0.35);
+  --ang-red-muted:  rgba(221, 0, 49, 0.12);
+
+  // Sci-fi palette
+  --sf-bg:          #080b14;
+  --sf-surface:     #0d1220;
+  --sf-surface-2:   #121929;
+  --sf-border:      rgba(255, 255, 255, 0.06);
+  --sf-border-glow: rgba(221, 0, 49, 0.3);
+  --sf-cyan:        #00d4ff;
+  --sf-cyan-glow:   rgba(0, 212, 255, 0.2);
+  --sf-amber:       #ffb700;
+
+  // Typography
+  --font-display:   'Rajdhani', sans-serif;
+  --font-mono:      'Share Tech Mono', monospace;
+  --font-body:      'Exo 2', sans-serif;
+
+  // Text
+  --text-primary:   rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(255, 255, 255, 0.52);
+  --text-muted:     rgba(255, 255, 255, 0.28);
+
+  // Spacing & sizing
+  --nav-height:     68px;
+  --nav-z:          1000;
+  --subnav-z:       999;
+
+  // Transitions
+  --t-fast:         150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-med:          250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --t-spring:       380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --text-sm: 0.575rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+}
+
+:host {
+  display: block;
+  font-family: var(--font-body);
+}

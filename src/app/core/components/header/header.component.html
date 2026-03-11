@@ -1,0 +1,369 @@
+<header
+  class="nav-header"
+  role="banner"
+  [attr.aria-expanded]="mobileMenuOpen()"
+>
+  <!-- ░░ SCANLINE OVERLAY ░░ -->
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- ════════════════════════════════════════════════
+       PRIMARY NAV BAR
+  ════════════════════════════════════════════════ -->
+  <div class="nav-inner" role="navigation" aria-label="Primary navigation">
+
+    <!-- ── LOGO ─────────────────────────────────── -->
+    <a
+      class="logo"
+      routerLink="/"
+      aria-label="AngularFi — Return to home"
+    >
+      <span class="logo__mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <polygon points="20,2 38,10 38,30 20,38 2,30 2,10" class="hex-bg"/>
+          <polygon points="20,6 34,12 34,28 20,34 6,28 6,12" class="hex-inner"/>
+          <text x="20" y="25" text-anchor="middle" class="logo-letter">A</text>
+        </svg>
+      </span>
+      <span class="logo__text">
+        <span class="logo__primary">Angular</span><span class="logo__accent">Fi</span>
+      </span>
+    </a>
+
+    <!-- ── MAIN NAV (CENTER) ─────────────────────── -->
+    <nav
+      class="main-nav"
+      aria-label="Site sections"
+      id="main-navigation"
+    >
+      <ul class="main-nav__list" role="menubar" aria-label="Main menu">
+
+        @for (item of navItems(); track item.id) {
+          <li class="main-nav__item" role="none">
+            <!--
+              hover-zone wraps BOTH the trigger button and the absolutely-
+              positioned subnav. mouseenter/mouseleave fire on this div,
+              so moving between button → subnav never crosses a leave boundary.
+              A ::after pseudo-element bridges the 8px gap so even that tiny
+              space doesn't trigger mouseleave.
+            -->
+            <div
+              class="nav-item__hover-zone"
+              (mouseenter)="onNavItemEnter(item.id)"
+              (mouseleave)="onNavItemLeave()"
+
+            >
+              <button
+                class="main-nav__trigger"
+                role="menuitem"
+                [attr.aria-haspopup]="'true'"
+                [attr.aria-expanded]="isSubNavOpen(item.id)"
+                [attr.aria-controls]="'subnav-' + item.id"
+                [class.active]="isSubNavOpen(item.id)"
+                (keydown)="onNavKeydown($event, item.id)"
+              >
+                <span class="nav-label">{{ item.label }}</span>
+                <span class="nav-chevron" aria-hidden="true">
+                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </span>
+              </button>
+
+              <!-- ── HORIZONTAL SUBNAV ── -->
+              @if(isSubNavOpen(item.id)) {
+                <div
+                  class="subnav subnav--horizontal"
+                  [id]="'subnav-' + item.id"
+                  role="menu"
+                  [attr.aria-label]="item.label + ' submenu'"
+                >
+                  <div class="subnav__inner">
+                    @for (sub of item.subNav; track sub.route) {
+                      <a
+                        class="subnav__item"
+                        role="menuitem"
+                        [routerLink]="sub.route"
+                        (click)="activeSubNav.set(null)"
+                      >
+                        <span class="subnav__icon" aria-hidden="true">{{ sub.icon }}</span>
+                        <span class="subnav__label">{{ sub.label }}</span>
+                        @if (sub.badge) {
+                          <span class="subnav__badge" aria-label="New">{{ sub.badge }}</span>
+                        }
+                      </a>
+                    }
+                  </div>
+                  <div class="subnav__glow" aria-hidden="true"></div>
+                </div>
+              }
+            </div>
+          </li>
+        }
+
+      </ul>
+    </nav>
+
+    <!-- ── RIGHT ZONE ────────────────────────────── -->
+    <div class="nav-right" aria-label="User controls">
+
+      @if (!isAuthenticated()) {
+        <!-- LOGGED OUT: Login + Register -->
+        <div class="auth-actions" role="group" aria-label="Authentication">
+          <a
+            class="btn btn--ghost"
+            routerLink="/login"
+            role="link"
+          >
+            <span>Login</span>
+          </a>
+          <a
+            class="btn btn--primary"
+            routerLink="/register"
+            role="link"
+          >
+            <span class="btn__glow" aria-hidden="true"></span>
+            <span>Register</span>
+          </a>
+        </div>
+
+      } @else {
+        <!-- LOGGED IN: Full user panel -->
+        @defer (on immediate) {
+          <div class="user-panel" role="group" aria-label="User controls">
+
+            <!-- Notifications -->
+            <button
+              class="icon-btn"
+              [class.icon-btn--active]="notificationsPanelOpen()"
+              aria-label="Notifications"
+              [attr.aria-expanded]="notificationsPanelOpen()"
+              aria-haspopup="true"
+              aria-controls="notifications-panel"
+              (click)="toggleNotifications($event)"
+            >
+              <svg class="icon-btn__svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              @if (user().notificationCount > 0) {
+                <span
+                  class="icon-btn__badge"
+                  aria-label="{{ user().notificationCount }} unread notifications"
+                >
+                  {{ user().notificationCount }}
+                </span>
+              }
+            </button>
+
+            <!-- Shop -->
+            <a
+              class="icon-btn"
+              routerLink="/shop"
+              aria-label="Shop — browse items"
+            >
+              <svg class="icon-btn__svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </a>
+
+            <!-- XP Progress + Level -->
+            <div class="xp-block" aria-label="Experience points and level">
+              <div
+                class="xp-bar"
+                role="progressbar"
+                [attr.aria-valuenow]="xpPercent()"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-label]="xpBarLabel()"
+              >
+                <div
+                  class="xp-bar__fill"
+                  [style.width.%]="xpPercent()"
+                ></div>
+                <div class="xp-bar__glow" aria-hidden="true"></div>
+              </div>
+              <div class="xp-info">
+                <span class="xp-info__title">{{ user().displayName }}</span>
+                <span class="xp-info__level" aria-label="Level {{ user().level }}: {{ user().levelTitle }}">
+                  LVL {{ user().level }} · {{ user().levelTitle }}
+                </span>
+              </div>
+            </div>
+
+            <!-- User Dropdown Trigger -->
+            <div class="user-dropdown-wrapper">
+              <button
+                class="user-trigger"
+                [class.user-trigger--open]="userDropdownOpen()"
+                aria-label="User menu for {{ user().displayName }}"
+                aria-haspopup="true"
+                [attr.aria-expanded]="userDropdownOpen()"
+                aria-controls="user-dropdown"
+                (click)="toggleUserDropdown($event)"
+                (keydown)="onDropdownKeydown($event)"
+              >
+                <span class="user-avatar" aria-hidden="true">
+                  @if (user().avatarUrl) {
+                    <img
+                      [src]="user().avatarUrl"
+                      [alt]="user().displayName + ' avatar'"
+                      class="user-avatar__img"
+                    />
+                  } @else {
+                    <span class="user-avatar__initials">
+                      {{ user().displayName.charAt(0) }}
+                    </span>
+                  }
+                  <span class="user-avatar__ring" aria-hidden="true"></span>
+                </span>
+                <span class="user-trigger__chevron" aria-hidden="true">
+                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </span>
+              </button>
+
+              <!-- VERTICAL USER DROPDOWN ──────────── -->
+              @if (userDropdownOpen()) {
+                <div
+                  id="user-dropdown"
+                  class="user-dropdown"
+                  role="menu"
+                  aria-label="User account menu"
+                  (keydown)="onDropdownKeydown($event)"
+                >
+                  <!-- User summary header -->
+                  <div class="user-dropdown__header" role="presentation">
+                    <span class="user-dropdown__name">{{ user().displayName }}</span>
+                    <span class="user-dropdown__level">
+                      ⬡ Level {{ user().level }} — {{ user().levelTitle }}
+                    </span>
+                  </div>
+
+                  <div class="user-dropdown__divider" role="separator"></div>
+
+                  @for (action of userMenuActions(); track action.id) {
+                    @if (action.divider) {
+                      <div class="user-dropdown__divider" role="separator"></div>
+                    } @else {
+                      <button
+                        class="user-dropdown__item"
+                        [class.user-dropdown__item--danger]="action.action === 'logout'"
+                        role="menuitem"
+                        (click)="handleUserAction(action)"
+                      >
+                        <span class="dropdown-icon" aria-hidden="true">{{ action.icon }}</span>
+                        <span>{{ action.label }}</span>
+                      </button>
+                    }
+                  }
+                </div>
+              }
+            </div>
+
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ── MOBILE HAMBURGER ──────────────────────── -->
+    <button
+      class="hamburger"
+      [class.hamburger--open]="mobileMenuOpen()"
+      aria-label="Toggle mobile navigation menu"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-controls="mobile-menu"
+      (click)="toggleMobileMenu()"
+    >
+      <span class="hamburger__bar" aria-hidden="true"></span>
+      <span class="hamburger__bar" aria-hidden="true"></span>
+      <span class="hamburger__bar" aria-hidden="true"></span>
+    </button>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       MOBILE MENU DRAWER
+  ════════════════════════════════════════════════ -->
+  @if (mobileMenuOpen()) {
+    <nav
+      id="mobile-menu"
+      class="mobile-menu"
+      aria-label="Mobile navigation"
+      role="navigation"
+    >
+      <div class="mobile-menu__inner">
+
+        @for (item of navItems(); track item.id) {
+          <div class="mobile-nav__section">
+            <button
+              class="mobile-nav__trigger"
+              [class.mobile-nav__trigger--open]="isMobileItemExpanded(item.id)"
+              [attr.aria-expanded]="isMobileItemExpanded(item.id)"
+              [attr.aria-controls]="'mobile-subnav-' + item.id"
+              (click)="toggleMobileItem(item.id)"
+            >
+              <span>{{ item.label }}</span>
+              <span class="mobile-chevron" aria-hidden="true">
+                <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                  <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </button>
+
+            @if (isMobileItemExpanded(item.id)) {
+              <div
+                [id]="'mobile-subnav-' + item.id"
+                class="mobile-subnav"
+                role="group"
+                [attr.aria-label]="item.label + ' submenu'"
+              >
+                @for (sub of item.subNav; track sub.route) {
+                  <a
+                    class="mobile-subnav__item"
+                    [routerLink]="sub.route"
+                    (click)="toggleMobileMenu()"
+                  >
+                    <span aria-hidden="true">{{ sub.icon }}</span>
+                    {{ sub.label }}
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Mobile auth -->
+        @if (!isAuthenticated()) {
+          <div class="mobile-auth">
+            <a class="btn btn--ghost btn--full" routerLink="/login" (click)="toggleMobileMenu()">Login</a>
+            <a class="btn btn--primary btn--full" routerLink="/register" (click)="toggleMobileMenu()">Register</a>
+          </div>
+        }
+      </div>
+    </nav>
+  }
+
+  <!-- Notifications Panel (outside flow) -->
+  @if (notificationsPanelOpen()) {
+    <div
+      id="notifications-panel"
+      class="notifications-panel"
+      role="dialog"
+      aria-label="Notifications"
+      aria-modal="true"
+    >
+      <div class="notifications-panel__header">
+        <span class="notifications-panel__title">Transmissions</span>
+        <span class="notifications-panel__count">{{ user().notificationCount }} new</span>
+      </div>
+      <div class="notifications-panel__empty">
+        <span aria-hidden="true">◈</span>
+        <p>No critical alerts detected</p>
+        <small>All systems nominal</small>
+      </div>
+    </div>
+  }
+</header>
