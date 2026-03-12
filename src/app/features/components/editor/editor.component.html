@@ -1,0 +1,30 @@
+<div class="editor-container" [class.editor-container--loading]="isLoading()">
+
+  <!-- Loading skeleton -->
+  <!-- @if (isLoading()) {
+    <div class="editor-skeleton" aria-busy="true" aria-label="Loading editor">
+      <div class="sk-line-numbers">
+        @for (n of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; track n) {
+          <div class="sk-ln"></div>
+        }
+      </div>
+      <div class="sk-lines">
+        @for (w of skeletonWidths; track w.id) {
+          <div class="sk-line" [style.width.%]="w.w"></div>
+        }
+      </div>
+    </div>
+  } -->
+
+  <!-- CodeMirror host -->
+  <div
+    #editorHost
+    class="editor-host"
+    [class.editor-host--ready]="isReady()"
+    role="textbox"
+    aria-multiline="true"
+    [attr.aria-label]="'Code editor: ' + file().filename"
+    [style.--cm-font-size]="settings().fontSize + 'px'"
+  ></div>
+
+</div>

@@ -1,23 +1,14 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// APP ROUTES — AngularFi Dev Studio
+// IDE ROUTES — Lazy-loaded feature routes
 // ══════════════════════════════════════════════════════════════════════════════
 
 import { Routes } from '@angular/router';
 
-export const APP_ROUTES: Routes = [
+export const IDE_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'ide',
-    pathMatch: 'full',
-  },
-  {
-    // Lazy-load the entire IDE feature module
-    path: 'ide',
-    loadChildren: () =>
-      import('./features/components/ide/ide.routes').then(m => m.IDE_ROUTES),
-  },
-  {
-    path: '**',
-    redirectTo: 'ide',
+    loadComponent: () =>
+      import('./ide.component').then((m) => m.IdeComponent),
+    title: 'AngularFi Dev Studio',
   },
 ];
