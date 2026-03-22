@@ -43,14 +43,15 @@ export class IdePreviewComponent implements AfterViewInit, OnDestroy {
 
   // ── Outputs ─────────────────────────────────────────────────────────────
   readonly consoleMessage = output<TerminalLog>();
-  readonly previewError   = output<string>();
+  readonly previewError = output<string>();
+  readonly previewReady = output<void>();
 
   // ── State ────────────────────────────────────────────────────────────────
-  readonly state        = signal<PreviewState>('empty');
+  readonly state = signal<PreviewState>('empty');
   readonly errorMessage = signal<string>('');
-  readonly loadTimeMs   = signal<number>(0);
-  readonly currentUrl   = signal<string>('about:blank');
-  readonly isZoomed     = signal<boolean>(false);
+  readonly loadTimeMs = signal<number>(0);
+  readonly currentUrl = signal<string>('about:blank');
+  readonly isZoomed = signal<boolean>(false);
 
   private loadStartTime = 0;
   private messageHandler: ((e: MessageEvent) => void) | null = null;
@@ -59,13 +60,22 @@ export class IdePreviewComponent implements AfterViewInit, OnDestroy {
     // When iframeDoc changes, load the new doc into the iframe
     effect(() => {
       const doc = this.iframeDoc();
-      if (!isPlatformBrowser(this.platformId)) return;
+      console.log(
+        '[Preview] iframeDoc changed:',
+        doc ? `${doc.length} chars` : 'null',
+      );
+      if (!isPlatformBrowser(this.platformId)) {
+        console.log('[Preview] Not browser platform');
+        return;
+      }
 
       untracked(() => {
         if (!doc) {
+          console.log('[Preview] Doc is null, setting state to empty');
           this.state.set('empty');
           return;
         }
+        console.log('[Preview] Loading doc into iframe...');
         this.loadDoc(doc);
       });
     });
@@ -100,6 +110,7 @@ export class IdePreviewComponent implements AfterViewInit, OnDestroy {
           this.loadTimeMs.set(dur);
           this.state.set('ready');
           this.currentUrl.set('preview://localhost/');
+          this.previewReady.emit();
           break;
         }
 
@@ -130,14 +141,22 @@ export class IdePreviewComponent implements AfterViewInit, OnDestroy {
 
   private loadDoc(doc: string): void {
     const frame = this.frameRef?.nativeElement;
-    if (!frame) return;
+    console.log('[Preview.loadDoc] frame =', frame ? 'found' : 'NOT FOUND');
 
+    if (!frame) {
+      console.error('[Preview] Frame ref is null!');
+      return;
+    }
+
+    console.log('[Preview.loadDoc] Setting state to loading');
     this.state.set('loading');
     this.errorMessage.set('');
     this.loadStartTime = performance.now();
 
+    console.log('[Preview.loadDoc] Setting srcdoc');
     // Write HTML directly into the iframe via srcdoc
     frame.srcdoc = doc;
+    console.log('[Preview.loadDoc] srcdoc set successfully');
   }
 
   // ── Controls ─────────────────────────────────────────────────────────────
@@ -159,26 +178,34 @@ export class IdePreviewComponent implements AfterViewInit, OnDestroy {
   }
 
   toggleZoom(): void {
-    this.isZoomed.update(v => !v);
+    this.isZoomed.update((v) => !v);
   }
 
   // ── Computed ─────────────────────────────────────────────────────────────
 
   readonly statusDot = computed(() => {
     switch (this.state()) {
-      case 'ready':   return '#00ff9d';
-      case 'loading': return '#ffb700';
-      case 'error':   return '#DD0031';
-      default:        return 'rgba(255,255,255,0.2)';
+      case 'ready':
+        return '#00ff9d';
+      case 'loading':
+        return '#ffb700';
+      case 'error':
+        return '#DD0031';
+      default:
+        return 'rgba(255,255,255,0.2)';
     }
   });
 
   readonly statusLabel = computed(() => {
     switch (this.state()) {
-      case 'ready':   return `Ready · ${this.loadTimeMs()}ms`;
-      case 'loading': return 'Loading…';
-      case 'error':   return 'Error';
-      default:        return 'No preview';
+      case 'ready':
+        return `Ready · ${this.loadTimeMs()}ms`;
+      case 'loading':
+        return 'Loading…';
+      case 'error':
+        return 'Error';
+      default:
+        return 'No preview';
     }
   });
 

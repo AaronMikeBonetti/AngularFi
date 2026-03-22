@@ -20,11 +20,53 @@ import {
   untracked,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import type { IdeFile, EditorSettings, CursorPosition } from '../../models/ide.model';
+import type {
+  IdeFile,
+  EditorSettings,
+  CursorPosition,
+} from '../../models/ide.model';
 
-// ─── CodeMirror types (loaded dynamically to support SSR) ──────────────────
-type EditorView = import('@codemirror/view').EditorView;
-type Extension = import('@codemirror/state').Extension;
+// ─── CodeMirror imports ─────────────────────────────────────────────────────
+import { EditorState } from '@codemirror/state';
+import {
+  EditorView,
+  keymap,
+  lineNumbers,
+  highlightActiveLine,
+  drawSelection,
+  rectangularSelection,
+  crosshairCursor,
+  highlightActiveLineGutter,
+  dropCursor,
+} from '@codemirror/view';
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+} from '@codemirror/commands';
+import {
+  bracketMatching,
+  indentOnInput,
+  foldGutter,
+  foldKeymap,
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language';
+import {
+  autocompletion,
+  closeBrackets,
+  completionKeymap,
+  closeBracketsKeymap,
+} from '@codemirror/autocomplete';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { javascript } from '@codemirror/lang-javascript';
+import { html as langHTML } from '@codemirror/lang-html';
+import { css as langCSS } from '@codemirror/lang-css';
+import { json as langJSON } from '@codemirror/lang-json';
+
+import type { Extension } from '@codemirror/state';
 
 @Component({
   selector: 'ide-editor',
@@ -40,17 +82,17 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
 
   // ── Inputs ──────────────────────────────────────────────────────────────
-  readonly file     = input.required<IdeFile>();
+  readonly file = input.required<IdeFile>();
   readonly settings = input.required<EditorSettings>();
 
   // ── Outputs ─────────────────────────────────────────────────────────────
-  readonly contentChange  = output<string>();
-  readonly cursorChange   = output<CursorPosition>();
-  readonly saveRequested  = output<void>();
-  readonly runRequested   = output<void>();
+  readonly contentChange = output<string>();
+  readonly cursorChange = output<CursorPosition>();
+  readonly saveRequested = output<void>();
+  readonly runRequested = output<void>();
 
   // ── Internal state ──────────────────────────────────────────────────────
-  readonly isReady   = signal(false);
+  readonly isReady = signal(false);
   readonly isLoading = signal(true);
 
   private view: EditorView | null = null;
@@ -59,6 +101,7 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
   constructor() {
     // React to file changes — swap content without destroying the editor
     effect(() => {
+      console.log(document);
       const f = this.file();
       if (!this.view || !this.isReady()) return;
 
@@ -83,52 +126,22 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
-    await this.initCodeMirror();
+    this.initCodeMirror();
   }
 
   // ── CodeMirror Initialisation ────────────────────────────────────────────
 
-  private async initCodeMirror(): Promise<void> {
+  private initCodeMirror(): void {
     try {
-      // Lazy-load all CodeMirror modules to keep initial bundle small
-      const [
-        { EditorState },
-        { EditorView, keymap, lineNumbers, highlightActiveLine,
-          drawSelection, rectangularSelection, crosshairCursor,
-          highlightActiveLineGutter, dropCursor },
-        { defaultKeymap, history, historyKeymap, indentWithTab,
-          undo, redo },
-        { bracketMatching, indentOnInput, foldGutter, foldKeymap,
-          syntaxHighlighting, defaultHighlightStyle },
-        { autocompletion, closeBrackets, completionKeymap,
-          closeBracketsKeymap },
-        { highlightSelectionMatches, searchKeymap },
-        { oneDark },
-        { javascript },
-        { html: langHTML },
-        { css: langCSS },
-        { json: langJSON },
-      ] = await Promise.all([
-        import('https://esm.sh/@codemirror/state@6.4.1' as string),
-        import('https://esm.sh/@codemirror/view@6.26.3' as string),
-        import('https://esm.sh/@codemirror/commands@6.3.3' as string),
-        import('https://esm.sh/@codemirror/language@6.10.1' as string),
-        import('https://esm.sh/@codemirror/autocomplete@6.16.0' as string),
-        import('https://esm.sh/@codemirror/search@6.5.6' as string),
-        import('https://esm.sh/@codemirror/theme-one-dark@6.1.2' as string),
-        import('https://esm.sh/@codemirror/lang-javascript@6.2.2' as string),
-        import('https://esm.sh/@codemirror/lang-html@6.4.9' as string),
-        import('https://esm.sh/@codemirror/lang-html@6.4.9' as string),
-        import('https://esm.sh/@codemirror/lang-css@6.2.9' as string),
-        import('https://esm.sh/@codemirror/lang-json@6.1.2' as string),
-      ]);
-
       const { fontSize, tabSize } = this.settings();
       const file = this.file();
 
       // Pick language extension
       const langExt = this.resolveLanguage(file.language, {
-        javascript, langHTML, langCSS, langJSON
+        javascript,
+        langHTML,
+        langCSS,
+        langJSON,
       });
 
       // Custom Angular-Fi theme overrides on top of oneDark
@@ -211,12 +224,18 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
         {
           key: 'Ctrl-s',
           mac: 'Cmd-s',
-          run: () => { this.saveRequested.emit(); return true; },
+          run: () => {
+            this.saveRequested.emit();
+            return true;
+          },
         },
         {
           key: 'Ctrl-Enter',
           mac: 'Cmd-Enter',
-          run: () => { this.runRequested.emit(); return true; },
+          run: () => {
+            this.runRequested.emit();
+            return true;
+          },
         },
         ...defaultKeymap,
         ...historyKeymap,
@@ -269,7 +288,6 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
 
       this.isLoading.set(false);
       this.isReady.set(true);
-
     } catch (err) {
       console.error('[IdeEditor] Failed to init CodeMirror:', err);
       this.isLoading.set(false);
@@ -280,15 +298,25 @@ export class IdeEditorComponent implements AfterViewInit, OnDestroy {
 
   private resolveLanguage(
     language: IdeFile['language'],
-    exts: { javascript: unknown; langHTML: unknown; langCSS: unknown; langJSON: unknown }
+    exts: {
+      javascript: unknown;
+      langHTML: unknown;
+      langCSS: unknown;
+      langJSON: unknown;
+    },
   ): Extension {
     const { javascript, langHTML, langCSS, langJSON } = exts as any;
     switch (language) {
-      case 'typescript': return javascript({ typescript: true, jsx: false });
-      case 'html':       return langHTML();
-      // case 'css':        return langCSS({ css: true, scss: false, less: false });
-      case 'json':       return langJSON();
-      default:           return javascript({ typescript: false });
+      case 'typescript':
+        return javascript({ typescript: true, jsx: false });
+      case 'html':
+        return langHTML();
+      case 'css':
+        return langCSS();
+      case 'json':
+        return langJSON();
+      default:
+        return javascript({ typescript: false });
     }
   }
 

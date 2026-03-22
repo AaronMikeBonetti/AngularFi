@@ -20,7 +20,7 @@
             "outputPath": "dist/boilerplate",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -30,10 +30,7 @@
               }
             ],
             "styles": ["src/styles.scss"],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": false,
-            "ssr": false
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -66,15 +63,9 @@
               "buildTarget": "boilerplate:build:production"
             },
             "development": {
-              "buildTarget": "boilerplate:build:development"
-            },
-            "options": {
-              "browserTarget": "boilerplate:build",
-              "hmr": false,
-              "ssr": false,
-              "prerender": false
-            },
-            "defaultConfiguration": "development"
+              "buildTarget": "boilerplate:build:development",
+              "hmr": false
+            }
           },
           "defaultConfiguration": "development"
         },
@@ -84,7 +75,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": ["zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [

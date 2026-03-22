@@ -21,8 +21,12 @@ import { IdeStateService } from '../../services/ide-state.service';
 import { IdeCompilerService } from '../../services/ide-compiler.service';
 import { IdeEditorComponent } from '../editor/editor.component';
 import { IdePreviewComponent } from '../preview/preview.component';
-import { IdeTerminalComponent } from '../terminal/terminal.component';
-import type { IdeFile, LayoutMode, RunStatus, TerminalLog } from '../../models/ide.model';
+import type {
+  IdeFile,
+  LayoutMode,
+  RunStatus,
+  TerminalLog,
+} from '../../models/ide.model';
 
 // TypeScript compiler (loaded via script tag in index.html)
 declare const ts: typeof import('typescript');
@@ -30,7 +34,7 @@ declare const ts: typeof import('typescript');
 @Component({
   selector: 'app-ide',
   standalone: true,
-  imports: [IdeEditorComponent, IdePreviewComponent, IdeTerminalComponent],
+  imports: [IdeEditorComponent, IdePreviewComponent],
   templateUrl: './ide.component.html',
   styleUrl: './ide.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -100,11 +104,45 @@ export class IdeComponent implements OnInit, OnDestroy {
   // ── TypeScript available ───────────────────────────────────────────────
   readonly tsReady = signal(false);
 
+  private autoRebuildTimeout: number | null = null;
+
   constructor() {
     // Effect: watch run status for status-bar color
     effect(() => {
       const status = this.runStatus();
       // Could trigger host class changes here
+    });
+
+    // Effect: auto-rebuild when files change (debounced)
+    effect(() => {
+      const files = this.files();
+      console.log(
+        '[IDE autobuild] Files changed, dirty count:',
+        this.dirtyCount(),
+      );
+      if (!isPlatformBrowser(this.platformId)) return;
+
+      // Don't auto-rebuild if already running or if there are no dirty files
+      if (this.isRunning() || this.dirtyCount() === 0) {
+        console.log(
+          '[IDE autobuild] Skipping - running:',
+          this.isRunning(),
+          'dirty:',
+          this.dirtyCount(),
+        );
+        return;
+      }
+
+      // Clear existing timeout
+      if (this.autoRebuildTimeout !== null) {
+        clearTimeout(this.autoRebuildTimeout);
+      }
+
+      // Debounce auto-rebuild by 1 second
+      this.autoRebuildTimeout = window.setTimeout(() => {
+        console.log('[IDE autobuild] Auto-rebuilding...');
+        this.run();
+      }, 1000);
     });
   }
 
@@ -199,11 +237,18 @@ export class IdeComponent implements OnInit, OnDestroy {
   async run(): Promise<void> {
     if (this.isRunning()) return;
 
+    console.log('[IDE] Run clicked');
     this.state.setRunStatus('compiling');
     this.state.setPreviewDoc(null);
     this.compiler.clearLogs();
 
     const result = await this.compiler.build(this.files());
+    console.log('[IDE] Build result:', {
+      success: result.success,
+      hasDoc: !!result.iframeDoc,
+      docSize: result.iframeDoc?.length,
+      errors: result.errors.length,
+    });
 
     if (!result.success || !result.iframeDoc) {
       this.state.setRunStatus('error');
@@ -216,6 +261,7 @@ export class IdeComponent implements OnInit, OnDestroy {
     }
 
     this.state.setRunStatus('running');
+    console.log('[IDE] Setting preview doc');
     this.state.setPreviewDoc(result.iframeDoc);
     this.state.lastBuildDurationMs.set(result.durationMs);
 
@@ -322,6 +368,9 @@ export class IdeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.keydownHandler) {
       document.removeEventListener('keydown', this.keydownHandler);
+    }
+    if (this.autoRebuildTimeout !== null) {
+      clearTimeout(this.autoRebuildTimeout);
     }
   }
 }

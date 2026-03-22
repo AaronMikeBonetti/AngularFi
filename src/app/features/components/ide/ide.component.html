@@ -6,23 +6,40 @@
   role="application"
   aria-label="AngularFi Dev Studio"
 >
-
   <!-- ══════════════════════════════════════════════
        TITLE BAR
   ══════════════════════════════════════════════ -->
   <header class="title-bar" role="banner">
-
     <!-- Logo -->
     <div class="title-bar__brand">
       <div class="logo" aria-label="AngularFi Dev Studio">
-        <svg class="logo-hex" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-          <polygon points="20,2 38,10 38,30 20,38 2,30 2,10"
-                   fill="rgba(221,0,49,0.12)" stroke="rgba(221,0,49,0.45)" stroke-width="1.5"/>
-          <text x="20" y="26" text-anchor="middle"
-                font-family="Rajdhani,sans-serif" font-size="18" font-weight="700"
-                fill="#DD0031">A</text>
+        <svg
+          class="logo-hex"
+          viewBox="0 0 40 40"
+          fill="none"
+          aria-hidden="true"
+        >
+          <polygon
+            points="20,2 38,10 38,30 20,38 2,30 2,10"
+            fill="rgba(221,0,49,0.12)"
+            stroke="rgba(221,0,49,0.45)"
+            stroke-width="1.5"
+          />
+          <text
+            x="20"
+            y="26"
+            text-anchor="middle"
+            font-family="Rajdhani,sans-serif"
+            font-size="18"
+            font-weight="700"
+            fill="#DD0031"
+          >
+            A
+          </text>
         </svg>
-        <span class="logo-text">Angular<span class="logo-accent">Fi</span></span>
+        <span class="logo-text"
+          >Angular<span class="logo-accent">Fi</span></span
+        >
         <span class="logo-subtitle">Dev Studio</span>
       </div>
     </div>
@@ -54,14 +71,16 @@
 
     <!-- Actions -->
     <div class="title-bar__actions" role="toolbar" aria-label="IDE actions">
-
       <!-- Layout toggles -->
       <div class="layout-btns" role="group" aria-label="Layout modes">
-        @for (mode of [
-          { id: 'editor-focus',  icon: '⬛ ▭', label: 'Editor focus' },
-          { id: 'split',         icon: '▬ ▬',  label: 'Split view'   },
-          { id: 'preview-focus', icon: '▭ ⬛', label: 'Preview focus' }
-        ]; track mode.id) {
+        @for (
+          mode of [
+            { id: "editor-focus", icon: "⬛ ▭", label: "Editor focus" },
+            { id: "split", icon: "▬ ▬", label: "Split view" },
+            { id: "preview-focus", icon: "▭ ⬛", label: "Preview focus" },
+          ];
+          track mode.id
+        ) {
           <button
             class="layout-btn"
             [class.layout-btn--active]="layoutMode() === mode.id"
@@ -71,22 +90,51 @@
             [attr.aria-label]="mode.label"
           >
             <span class="layout-icon" aria-hidden="true">
-              @if (mode.id === 'editor-focus') {
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
-                  <rect x="0" y="0" width="10" height="12" rx="1" opacity="1"/>
-                  <rect x="11" y="0" width="5" height="12" rx="1" opacity="0.3"/>
+              @if (mode.id === "editor-focus") {
+                <svg
+                  width="16"
+                  height="12"
+                  viewBox="0 0 16 12"
+                  fill="currentColor"
+                >
+                  <rect x="0" y="0" width="10" height="12" rx="1" opacity="1" />
+                  <rect
+                    x="11"
+                    y="0"
+                    width="5"
+                    height="12"
+                    rx="1"
+                    opacity="0.3"
+                  />
                 </svg>
               }
-              @if (mode.id === 'split') {
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
-                  <rect x="0" y="0" width="7" height="12" rx="1" opacity="1"/>
-                  <rect x="8" y="0" width="8" height="12" rx="1" opacity="1"/>
+              @if (mode.id === "split") {
+                <svg
+                  width="16"
+                  height="12"
+                  viewBox="0 0 16 12"
+                  fill="currentColor"
+                >
+                  <rect x="0" y="0" width="7" height="12" rx="1" opacity="1" />
+                  <rect x="8" y="0" width="8" height="12" rx="1" opacity="1" />
                 </svg>
               }
-              @if (mode.id === 'preview-focus') {
-                <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
-                  <rect x="0" y="0" width="5" height="12" rx="1" opacity="0.3"/>
-                  <rect x="6" y="0" width="10" height="12" rx="1" opacity="1"/>
+              @if (mode.id === "preview-focus") {
+                <svg
+                  width="16"
+                  height="12"
+                  viewBox="0 0 16 12"
+                  fill="currentColor"
+                >
+                  <rect
+                    x="0"
+                    y="0"
+                    width="5"
+                    height="12"
+                    rx="1"
+                    opacity="0.3"
+                  />
+                  <rect x="6" y="0" width="10" height="12" rx="1" opacity="1" />
                 </svg>
               }
             </span>
@@ -105,9 +153,20 @@
         [attr.aria-expanded]="settingsOpen()"
         title="Settings"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+          />
         </svg>
       </button>
 
@@ -120,9 +179,20 @@
         [attr.aria-expanded]="shortcutsOpen()"
         title="Keyboard shortcuts"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <rect x="2" y="4" width="20" height="16" rx="2"/>
-          <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path
+            d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"
+          />
         </svg>
       </button>
 
@@ -133,9 +203,18 @@
         aria-label="Reset files to defaults"
         title="Reset (Ctrl+Shift+R)"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <polyline points="1 4 1 10 7 10"/>
-          <path d="M3.51 15a9 9 0 1 0 .49-4.9L1 10"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <polyline points="1 4 1 10 7 10" />
+          <path d="M3.51 15a9 9 0 1 0 .49-4.9L1 10" />
         </svg>
       </button>
 
@@ -153,15 +232,20 @@
         title="Run  ·  Ctrl+Enter"
       >
         @if (!isRunning()) {
-          <svg width="11" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <polygon points="5 3 19 12 5 21 5 3"/>
+          <svg
+            width="11"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
         } @else {
           <div class="run-spinner" aria-hidden="true"></div>
         }
         {{ runBtnLabel() }}
       </button>
-
     </div>
   </header>
 
@@ -177,15 +261,31 @@
     >
       <div class="settings-panel__header">
         <span>Settings</span>
-        <button class="settings-panel__close" (click)="toggleSettings()" aria-label="Close settings">✕</button>
+        <button
+          class="settings-panel__close"
+          (click)="toggleSettings()"
+          aria-label="Close settings"
+        >
+          ✕
+        </button>
       </div>
       <div class="settings-panel__body">
         <label class="setting-row">
           <span class="setting-label">Font size</span>
           <div class="font-size-ctrl">
-            <button (click)="setFontSize(settings().fontSize - 1)" aria-label="Decrease font size">−</button>
+            <button
+              (click)="setFontSize(settings().fontSize - 1)"
+              aria-label="Decrease font size"
+            >
+              −
+            </button>
             <span>{{ settings().fontSize }}px</span>
-            <button (click)="setFontSize(settings().fontSize + 1)" aria-label="Increase font size">+</button>
+            <button
+              (click)="setFontSize(settings().fontSize + 1)"
+              aria-label="Increase font size"
+            >
+              +
+            </button>
           </div>
         </label>
         <label class="setting-row">
@@ -193,7 +293,9 @@
           <select
             class="setting-select"
             [value]="settings().tabSize"
-            (change)="state.updateSettings({ tabSize: +$any($event.target).value })"
+            (change)="
+              state.updateSettings({ tabSize: +$any($event.target).value })
+            "
             aria-label="Tab size"
           >
             <option value="2">2 spaces</option>
@@ -217,22 +319,31 @@
     >
       <div class="settings-panel__header">
         <span>Shortcuts</span>
-        <button class="settings-panel__close" (click)="toggleShortcuts()" aria-label="Close shortcuts">✕</button>
+        <button
+          class="settings-panel__close"
+          (click)="toggleShortcuts()"
+          aria-label="Close shortcuts"
+        >
+          ✕
+        </button>
       </div>
       <div class="shortcuts-panel__body">
-        @for (sc of [
-          { keys: 'Ctrl+Enter',   desc: 'Run the component'     },
-          { keys: 'Ctrl+S',       desc: 'Save current file'     },
-          { keys: 'Ctrl+Shift+R', desc: 'Reset all files'       },
-          { keys: 'Ctrl+Z',       desc: 'Undo'                  },
-          { keys: 'Ctrl+Y',       desc: 'Redo'                  },
-          { keys: 'Tab',          desc: 'Indent'                 },
-          { keys: 'Shift+Tab',    desc: 'Unindent'              },
-          { keys: 'Ctrl+/',       desc: 'Toggle line comment'   },
-          { keys: 'Ctrl+F',       desc: 'Find in file'          },
-          { keys: 'Ctrl+H',       desc: 'Find & replace'        },
-          { keys: 'Escape',       desc: 'Close panel'           },
-        ]; track sc.keys) {
+        @for (
+          sc of [
+            { keys: "Ctrl+Enter", desc: "Run the component" },
+            { keys: "Ctrl+S", desc: "Save current file" },
+            { keys: "Ctrl+Shift+R", desc: "Reset all files" },
+            { keys: "Ctrl+Z", desc: "Undo" },
+            { keys: "Ctrl+Y", desc: "Redo" },
+            { keys: "Tab", desc: "Indent" },
+            { keys: "Shift+Tab", desc: "Unindent" },
+            { keys: "Ctrl+/", desc: "Toggle line comment" },
+            { keys: "Ctrl+F", desc: "Find in file" },
+            { keys: "Ctrl+H", desc: "Find & replace" },
+            { keys: "Escape", desc: "Close panel" },
+          ];
+          track sc.keys
+        ) {
           <div class="shortcut-row">
             <kbd class="shortcut-key">{{ sc.keys }}</kbd>
             <span class="shortcut-desc">{{ sc.desc }}</span>
@@ -245,13 +356,7 @@
   <!-- ══════════════════════════════════════════════
        MAIN WORKSPACE
   ══════════════════════════════════════════════ -->
-  <main
-    class="workspace"
-    #workspaceEl
-    role="main"
-    aria-label="IDE workspace"
-  >
-
+  <main class="workspace" #workspaceEl role="main" aria-label="IDE workspace">
     <!-- ── EDITOR PANEL ──────────────────────────── -->
     <section
       class="panel panel--editor"
@@ -262,11 +367,19 @@
       <div class="panel-bar">
         <div class="panel-bar__title">
           <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-            <rect width="10" height="10" rx="2" fill="rgba(221,0,49,0.3)"/>
-            <text x="5" y="7.5" text-anchor="middle"
-                  font-size="7" font-weight="700" fill="#DD0031">TS</text>
+            <rect width="10" height="10" rx="2" fill="rgba(221,0,49,0.3)" />
+            <text
+              x="5"
+              y="7.5"
+              text-anchor="middle"
+              font-size="7"
+              font-weight="700"
+              fill="#DD0031"
+            >
+              TS
+            </text>
           </svg>
-          {{ activeFile()?.filename ?? 'No file' }}
+          {{ activeFile()?.filename ?? "No file" }}
           @if (activeFile()?.isDirty) {
             <span class="unsaved-badge" aria-label="Unsaved changes">●</span>
           }
@@ -280,7 +393,7 @@
 
       <!-- CodeMirror -->
       @if (activeFile(); as file) {
-        @defer (on immediate; prefetch on idle) {
+        @defer (on immediate) {
           <ide-editor
             [file]="file"
             [settings]="settings()"
@@ -290,7 +403,11 @@
             (runRequested)="run()"
           />
         } @loading {
-          <div class="panel-loading" aria-busy="true" aria-label="Loading editor">
+          <div
+            class="panel-loading"
+            aria-busy="true"
+            aria-label="Loading editor"
+          >
             <div class="loading-pulse"></div>
           </div>
         }
@@ -313,16 +430,18 @@
       [style.width.%]="100 - editorWidth()"
       aria-label="Preview and terminal"
     >
-
       <!-- Preview panel -->
       <div
         class="preview-container"
-        [style.height]="'calc(100% - ' + panelSizes().terminalHeightPx + 'px - 4px)'"
+        [style.height]="
+          'calc(100% - ' + panelSizes().terminalHeightPx + 'px - 4px)'
+        "
       >
         <app-ide-preview
           [iframeDoc]="previewDoc()"
           (consoleMessage)="onConsoleMessage($event)"
           (previewError)="onPreviewError($event)"
+          (previewReady)="onPreviewReady()"
         />
       </div>
 
@@ -337,33 +456,6 @@
       ></div>
 
       <!-- Terminal panel -->
-      <div
-        class="terminal-container"
-        [style.height.px]="panelSizes().terminalHeightPx"
-      >
-        <div class="panel-bar">
-          <div class="panel-bar__title">
-            <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true">
-              <circle cx="4" cy="4" r="4" fill="#DD0031"/>
-            </svg>
-            Terminal
-          </div>
-          <div class="panel-bar__meta">
-            {{ logs().length }} entries
-          </div>
-        </div>
-
-        @defer (on idle) {
-          <app-ide-terminal
-            (clearRequested)="compiler.clearLogs()"
-          />
-        } @loading {
-          <div class="panel-loading" aria-busy="true">
-            <div class="loading-pulse"></div>
-          </div>
-        }
-      </div>
-
     </section>
   </main>
 
@@ -378,8 +470,14 @@
   >
     <div class="status-bar__left">
       <span class="status-brand">
-        <svg width="10" height="10" viewBox="0 0 40 40" fill="currentColor" aria-hidden="true">
-          <polygon points="20,2 38,10 38,30 20,38 2,30 2,10"/>
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 40 40"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <polygon points="20,2 38,10 38,30 20,38 2,30 2,10" />
         </svg>
         Angular 17
       </span>
@@ -396,9 +494,7 @@
 
     <div class="status-bar__right">
       @if (dirtyCount() > 0) {
-        <span class="status-dirty">
-          ● {{ dirtyCount() }} unsaved
-        </span>
+        <span class="status-dirty"> ● {{ dirtyCount() }} unsaved </span>
       }
       <span class="status-sep" aria-hidden="true">│</span>
       <span class="status-item">TypeScript 5.3</span>
@@ -410,5 +506,4 @@
       </span>
     </div>
   </footer>
-
 </div>

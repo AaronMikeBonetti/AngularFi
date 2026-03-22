@@ -1,5 +1,4 @@
 <div class="preview-panel" [class.preview-panel--zoomed]="isZoomed()">
-
   <!-- Panel Header -->
   <div class="preview-bar" role="toolbar" aria-label="Preview controls">
     <div class="preview-bar__status" aria-live="polite">
@@ -23,9 +22,18 @@
         title="Reload preview"
         aria-label="Reload preview"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <polyline points="23 4 23 10 17 10"/>
-          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <polyline points="23 4 23 10 17 10" />
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
         </svg>
       </button>
 
@@ -37,11 +45,20 @@
         aria-label="Toggle zoom"
         [attr.aria-pressed]="isZoomed()"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <polyline points="15 3 21 3 21 9"/>
-          <polyline points="9 21 3 21 3 15"/>
-          <line x1="21" y1="3" x2="14" y2="10"/>
-          <line x1="3" y1="21" x2="10" y2="14"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <polyline points="15 3 21 3 21 9" />
+          <polyline points="9 21 3 21 3 15" />
+          <line x1="21" y1="3" x2="14" y2="10" />
+          <line x1="3" y1="21" x2="10" y2="14" />
         </svg>
       </button>
 
@@ -52,10 +69,19 @@
         title="Open in new tab"
         aria-label="Open in new tab"
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
         </svg>
       </button>
     </div>
@@ -63,10 +89,12 @@
 
   <!-- Preview Body -->
   <div class="preview-body">
-
     <!-- Empty splash -->
-    @if (state() === 'empty') {
-      <div class="preview-splash" aria-label="Preview area empty — press Run to preview">
+    @if (state() === "empty") {
+      <div
+        class="preview-splash"
+        aria-label="Preview area empty — press Run to preview"
+      >
         <div class="splash-hex" aria-hidden="true">A</div>
         <p class="splash-title">Press <kbd>Run</kbd> to preview</p>
         <p class="splash-sub">Angular 17 · JIT via esm.sh · TypeScript 5.3</p>
@@ -79,8 +107,13 @@
     }
 
     <!-- Loading overlay -->
-    @if (state() === 'loading') {
-      <div class="preview-loader" role="status" aria-label="Loading preview" aria-live="polite">
+    @if (state() === "loading") {
+      <div
+        class="preview-loader"
+        role="status"
+        aria-label="Loading preview"
+        aria-live="polite"
+      >
         <div class="loader-ring" aria-hidden="true">
           <div class="loader-ring__inner"></div>
         </div>
@@ -89,14 +122,12 @@
     }
 
     <!-- Error overlay -->
-    @if (state() === 'error') {
+    @if (state() === "error") {
       <div class="preview-error" role="alert" aria-live="assertive">
         <div class="error-icon" aria-hidden="true">⚠</div>
         <p class="error-title">Bootstrap Error</p>
         <pre class="error-message">{{ errorMessage() }}</pre>
-        <button class="error-retry" (click)="reload()">
-          Retry
-        </button>
+        <button class="error-retry" (click)="reload()">Retry</button>
       </div>
     }
 
@@ -105,10 +136,9 @@
       #previewFrame
       class="preview-frame"
       [class.preview-frame--visible]="state() === 'ready'"
-      sandbox="allow-scripts allow-same-origin allow-forms"
+      sandbox="allow-scripts allow-forms"
       title="Angular component live preview"
       aria-label="Live preview of your Angular component"
     ></iframe>
-
   </div>
 </div>

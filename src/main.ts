@@ -10,14 +10,10 @@ import {
   withViewTransitions,
   withRouterConfig,
 } from '@angular/router';
-import {
-  provideZonelessChangeDetection,
-  isDevMode,
-} from '@angular/core';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 import { AppComponent } from './app/app.component';
-import { APP_ROUTES }   from './app/app.routes';
+import { APP_ROUTES } from './app/app.routes';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -32,4 +28,4 @@ bootstrapApplication(AppComponent, {
       withRouterConfig({ onSameUrlNavigation: 'reload' }),
     ),
   ],
-}).catch(err => console.error('[Bootstrap]', err));
+}).catch((err) => console.error('[Bootstrap]', err));
